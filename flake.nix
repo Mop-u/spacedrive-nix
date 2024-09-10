@@ -22,7 +22,7 @@
 
             src = pkgs.fetchurl {
                 url = "https://github.com/spacedriveapp/spacedrive/releases/download/${version}/Spacedrive-linux-x86_64.deb";
-                hash = "sha256-JFSbqzCDjG2bQ4ZO5P/fm6FXB93MWUu0aM4k0azbEgU=";
+                hash = "sha256-SbuL96xNEOPZ3Z5jd0gfJtNkUoEjO4W+P7K9mvyNmHA=";
             };
 
             nativeBuildInputs = with pkgs; [
