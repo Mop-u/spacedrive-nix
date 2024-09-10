@@ -35,12 +35,8 @@
             '';
 
             installPhase = ''
-                runhook preInstall
-
                 mv $out/usr/* $out
                 rm -rf $out/usr
-
-                runhook postInstall
             '';
 
             system = builtins.currentSystem;
