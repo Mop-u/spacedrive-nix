@@ -1,34 +1,29 @@
 {
     inputs = {
         nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+
+        systems.url = "github:nix-systems/x86_64-linux";
+        
         flake-utils.url = "github:numtide/flake-utils";
+        flake-utils.inputs.systems.follows = "systems";
     };
-    outputs = {self, nixpkgs, flake-utils}:
+
+    outputs = {self, nixpkgs, flake-utils, ...}: flake-utils.lib.eachDefaultSystem (system: 
     let
         system = "x86_64-linux";
         pkgs = nixpkgs.legacyPackages.${system};
-
-        pname = "spacedrive";
         version = "0.4.2";
-
-        src = pkgs.fetchurl {
-            url = "https://github.com/spacedriveapp/spacedrive/releases/download/${version}/Spacedrive-linux-x86_64.AppImage";
-            hash = "sha256-JFSbqzCDjG2bQ4ZO5P/fm6FXB93MWUu0aM4k0azbEgU=";
-        };
-
     in {
-        packages.${pname} = pkgs.stdenvNoCC.mkDerivation {
-            meta = {
-                description = "An open source file manager, powered by a virtual distributed filesystem";
-                homepage = "https://www.spacedrive.com";
-                changelog = "https://github.com/spacedriveapp/spacedrive/releases/tag/${version}";
-                platforms = [ "x86_64-linux" ];
-                license = nixpkgs.lib.licenses.agpl3Plus;
-                sourceProvenance = with nixpkgs.lib.sourceTypes; [ binaryNativeCode ];
-                mainProgram = pname;
-            };
-            dontConfigure = true;
+        packages.spacedrive = pkgs.stdenvNoCC.mkDerivation {
+            name = "spacedrive";
+            version = version;
             dontBuild = true;
+            dontConfigure = true;
+
+            src = pkgs.fetchurl {
+                url = "https://github.com/spacedriveapp/spacedrive/releases/download/${version}/Spacedrive-linux-x86_64.deb";
+                hash = "sha256-JFSbqzCDjG2bQ4ZO5P/fm6FXB93MWUu0aM4k0azbEgU=";
+            };
 
             nativeBuildInputs = with pkgs; [
                 dpkg
@@ -39,10 +34,6 @@
                 ${pkgs.dpkg}/bin/dpkg-deb -x $src $out
             '';
 
-            patchPhase = ''
-
-            '';
-
             installPhase = ''
                 runhook preInstall
 
@@ -51,8 +42,16 @@
 
                 runhook postInstall
             '';
+
+            system = builtins.currentSystem;
+
+            meta = {
+                description = "An open source file manager, powered by a virtual distributed filesystem";
+                homepage = "https://www.spacedrive.com";
+                changelog = "https://github.com/spacedriveapp/spacedrive/releases/tag/${version}";
+            };
         };
-    };
+    });
 }
 
 #''
