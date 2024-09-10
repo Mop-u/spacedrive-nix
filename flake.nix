@@ -28,6 +28,15 @@
             nativeBuildInputs = with pkgs; [
                 dpkg
                 autoPatchelfHook
+                libgcc
+                glib
+                cairo
+                dbus
+                gdk-pixbuf
+                gtk3
+                xdotool
+                libsoup_3
+                webkitgtk_4_1
             ];
             
             unpackPhase = ''
